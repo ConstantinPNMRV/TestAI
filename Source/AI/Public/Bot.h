@@ -26,20 +26,16 @@ private:
 public:
 	ABot();
 
-	virtual void Tick(float DeltaTime) override;
-
-	// Получение дерева поведения
+	// РџРѕР»СѓС‡РµРЅРёРµ РґРµСЂРµРІР° РїРѕРІРµРґРµРЅРёСЏ
 	UFUNCTION(BlueprintCallable, Category = "Public|Set")
 	UBehaviorTree* GetBehaviorTree() const;
 
-	// Задание активации дерева поведения
+	// Р—Р°РґР°РЅРёРµ Р°РєС‚РёРІР°С†РёРё РґРµСЂРµРІР° РїРѕРІРµРґРµРЅРёСЏ
 	UFUNCTION(BlueprintCallable, Category = "Public|Set")
 	void SetEnableBehaviorTree(bool IsOn);
 
 protected:
-	virtual void BeginPlay() override;
-
-	// Фиксация получения урона
+	// Р¤РёРєСЃР°С†РёСЏ РїРѕР»СѓС‡РµРЅРёСЏ СѓСЂРѕРЅР°
 	UFUNCTION(Category = "Protected|Bind")
 	void BindOnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 

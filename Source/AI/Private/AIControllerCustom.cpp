@@ -19,7 +19,7 @@ AAIControllerCustom::AAIControllerCustom(FObjectInitializer const& ObjectInitial
 	SetPerceptionComponent(*AIPerceptionComponent);
 	AIPerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AAIControllerCustom::BindOnTargetPerceptionUpdated);
 
-	// Инициализация зрения бота
+	// РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ Р·СЂРµРЅРёСЏ Р±РѕС‚Р°
 	AISense_Sight = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("AISense_Sight"));
 	AISense_Sight->SightRadius = 3000;
 	AISense_Sight->LoseSightRadius = 3500;
@@ -30,7 +30,7 @@ AAIControllerCustom::AAIControllerCustom(FObjectInitializer const& ObjectInitial
 	AIPerceptionComponent->ConfigureSense(*AISense_Sight);
 	AIPerceptionComponent->SetDominantSense(AISense_Sight->GetSenseImplementation());
 
-	// Инициализация слуха бота
+	// РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ СЃР»СѓС…Р° Р±РѕС‚Р°
 	AISense_Hearing = CreateDefaultSubobject<UAISenseConfig_Hearing>(TEXT("AISense_Hearing"));
 	AISense_Hearing->HearingRange = 5000;
 	AISense_Hearing->DetectionByAffiliation.bDetectEnemies = true;
@@ -38,19 +38,9 @@ AAIControllerCustom::AAIControllerCustom(FObjectInitializer const& ObjectInitial
 	AISense_Hearing->DetectionByAffiliation.bDetectFriendlies = true;
 	AIPerceptionComponent->ConfigureSense(*AISense_Hearing);
 
-	// Инициализация детекции получения урона ботом
+	// РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РґРµС‚РµРєС†РёРё РїРѕР»СѓС‡РµРЅРёСЏ СѓСЂРѕРЅР° Р±РѕС‚РѕРј
 	AISense_Damage = CreateDefaultSubobject<UAISenseConfig_Damage>(TEXT("AISense_Damage"));
 	AIPerceptionComponent->ConfigureSense(*AISense_Damage);
-}
-
-void AAIControllerCustom::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-void AAIControllerCustom::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
 
 void AAIControllerCustom::OnPossess(APawn* InPawn)
@@ -75,20 +65,16 @@ void AAIControllerCustom::OnPossess(APawn* InPawn)
 void AAIControllerCustom::BindOnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
 	PlayerEnemy = Cast<APawn>(Actor);
-
 	StimulusCurrent = Stimulus;
-	FName SenseName = UAIPerceptionSystem::GetSenseClassForStimulus(this, StimulusCurrent)->GetFName();
 
 	if (UGameplayStatics::GetPlayerPawn(this, 0) == PlayerEnemy)
 	{
+		FName SenseName = UAIPerceptionSystem::GetSenseClassForStimulus(this, StimulusCurrent)->GetFName();
 		if (SenseName == "AISense_Hearing")
 			BotHearingHandler();
 		else if (SenseName == "AISense_Sight")
 			BotVisionHandler();
-	}
-	else
-	{
-		if (SenseName == "AISense_Damage")
+		else if (SenseName == "AISense_Damage")
 			BotDamageHandler();
 	}
 }
@@ -157,5 +143,8 @@ void AAIControllerCustom::BotHearingHandler()
 
 void AAIControllerCustom::BotDamageHandler()
 {
-	BotVisionHandler();
+	BlackboardComp->SetValueAsObject("Player", PlayerEnemy);
+	SetIsHearNoise(false);
+	IsHasPlayer = true;
+	BlackboardComp->SetValueAsBool("IsHasPlayer", IsHasPlayer);
 }

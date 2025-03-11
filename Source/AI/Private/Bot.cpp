@@ -12,7 +12,7 @@ ABot::ABot()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Инициализация SkeletalMesh
+	// РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ SkeletalMesh
 	USkeletalMeshComponent* SkeletalMeshComponent = GetMesh();
 	SkeletalMeshComponent->SetRelativeLocation(FVector(0, 0, -89));
 	SkeletalMeshComponent->SetRelativeRotation(FRotator(0, 270, 0));
@@ -21,35 +21,30 @@ ABot::ABot()
 	if (BotSkeletalMesh.Succeeded())
 		SkeletalMeshComponent->SetSkeletalMesh(BotSkeletalMesh.Object);
 
-	// Задание AnimBlueprint для SkeletalMesh
+	// Р—Р°РґР°РЅРёРµ AnimBlueprint РґР»СЏ SkeletalMesh
 	static ConstructorHelpers::FObjectFinder<UAnimBlueprint> BotAnimBlueprint(TEXT("AnimBlueprint'/Game/Characters/Mannequins/Animations/ABP_Manny.ABP_Manny'"));
 	if (BotAnimBlueprint.Succeeded())
 		SkeletalMeshComponent->SetAnimClass(BotAnimBlueprint.Object->GeneratedClass);
 
-	// Инициализация BehaviorTree
+	// РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ BehaviorTree
 	static ConstructorHelpers::FObjectFinder<UBehaviorTree> BotBehaviorTree(TEXT("BehaviorTree'/Game/Blueprints/BT_BotCharacter.BT_BotCharacter'"));
 	if (BotBehaviorTree.Succeeded())
 		BehaviorTree = BotBehaviorTree.Object;
 
-	// Перезапись класса AIController по умолчанию
+	// РџРµСЂРµР·Р°РїРёСЃСЊ РєР»Р°СЃСЃР° AIController РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 	static ConstructorHelpers::FClassFinder<AAIControllerCustom> BotAIControllerCustom(TEXT("/Script/CoreUObject.Class'/Script/TestAI.AIControllerCustom'"));
 	if (BotAIControllerCustom.Succeeded())
 		AIControllerClass = BotAIControllerCustom.Class;
 
-	// Подписываемся на OnComponentHit от капсулы
+	// РџРѕРґРїРёСЃС‹РІР°РµРјСЃСЏ РЅР° OnComponentHit РѕС‚ РєР°РїСЃСѓР»С‹
 	GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &ABot::BindOnComponentHit);
 
-	// Инициализация компонента для толпы подобных ботов
+	// РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РєРѕРјРїРѕРЅРµРЅС‚Р° РґР»СЏ С‚РѕР»РїС‹ РїРѕРґРѕР±РЅС‹С… Р±РѕС‚РѕРІ
 	CrowdFollowingComponent = CreateDefaultSubobject<UCrowdFollowingComponent>("CrowdFollowingComponent");
 
-	// Задание плавного разворота у бота
+	// Р—Р°РґР°РЅРёРµ РїР»Р°РІРЅРѕРіРѕ СЂР°Р·РІРѕСЂРѕС‚Р° Сѓ Р±РѕС‚Р°
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bUseControllerRotationYaw = false;
-}
-
-void ABot::BeginPlay()
-{
-	Super::BeginPlay();
 }
 
 void ABot::BindOnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -59,19 +54,16 @@ void ABot::BindOnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 		HitCounter++;
 		if (HitCounter == 4)
 		{
+			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::FromHex("00D4FFFF"), FString::Printf(TEXT("Enemy is Dead")));
 			UE_LOG(LogTemp, Display, TEXT("Enemy is Dead"));
 			SetEnableBehaviorTree(false);
 		}
 		else if (HitCounter < 4)
 		{
+			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::FromHex("00D4FFFF"), FString::Printf(TEXT("-25 hp")));
 			UE_LOG(LogTemp, Display, TEXT("-25 hp"));
 		}
 	}
-}
-
-void ABot::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
 
 UBehaviorTree* ABot::GetBehaviorTree() const

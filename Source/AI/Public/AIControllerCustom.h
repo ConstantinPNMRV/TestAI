@@ -48,46 +48,44 @@ private:
 
 public:
 	explicit AAIControllerCustom(FObjectInitializer const& ObjectInitializer);
-	virtual void Tick(float DeltaTime) override;
 
-	// Задание активации дерева поведения
+	// Р—Р°РґР°РЅРёРµ Р°РєС‚РёРІР°С†РёРё РґРµСЂРµРІР° РїРѕРІРµРґРµРЅРёСЏ
 	UFUNCTION(BlueprintCallable, Category = "Public|Set")
 	void SetEnableBehaviorTree(bool IsOn) const;
 
-	// Задаем значение, что бот услышал звук
+	// Р—Р°РґР°РµРј Р·РЅР°С‡РµРЅРёРµ, С‡С‚Рѕ Р±РѕС‚ СѓСЃР»С‹С€Р°Р» Р·РІСѓРє
 	UFUNCTION(BlueprintCallable, Category = "Public|Set")
 	void SetIsHearNoise(bool IsOn) const;
 
 protected:
-	virtual void BeginPlay() override;
 	virtual void OnPossess(APawn* InPawn) override;
 
-	// Подписка на делегат OnTargetPerceptionUpdated
+	// РџРѕРґРїРёСЃРєР° РЅР° РґРµР»РµРіР°С‚ OnTargetPerceptionUpdated
 	UFUNCTION(Category = "Protected|Bind")
 	void BindOnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 
 private:
-	// Задание точек потрулирования
+	// Р—Р°РґР°РЅРёРµ С‚РѕС‡РµРє РїРѕС‚СЂСѓР»РёСЂРѕРІР°РЅРёСЏ
 	UFUNCTION(Category = "Private|Set")
 	void SetPatrolLocations(FVector ForwardLocation, FVector BackwardLocation) const;
 
-	// Вычисление точек потрулирования
+	// Р’С‹С‡РёСЃР»РµРЅРёРµ С‚РѕС‡РµРє РїРѕС‚СЂСѓР»РёСЂРѕРІР°РЅРёСЏ
 	UFUNCTION(Category = "Private")
 	void CalculatePatrolLocations() const;
 
-	// Вычисление источника шума и реакция на него
+	// Р’С‹С‡РёСЃР»РµРЅРёРµ РёСЃС‚РѕС‡РЅРёРєР° С€СѓРјР° Рё СЂРµР°РєС†РёСЏ РЅР° РЅРµРіРѕ
 	UFUNCTION(Category = "Private")
 	FVector CalculateNoiseLocation(FVector StimulusLocation, FVector ReceiverLocation) const;
 
-	// Обработка зрения
+	// РћР±СЂР°Р±РѕС‚РєР° Р·СЂРµРЅРёСЏ
 	UFUNCTION(Category = "Private")
 	void BotVisionHandler();
 
-	// Обработка слуха
+	// РћР±СЂР°Р±РѕС‚РєР° СЃР»СѓС…Р°
 	UFUNCTION(Category = "Private")
 	void BotHearingHandler();
 
-	// Обработка получения урона
+	// РћР±СЂР°Р±РѕС‚РєР° РїРѕР»СѓС‡РµРЅРёСЏ СѓСЂРѕРЅР°
 	UFUNCTION(Category = "Private")
 	void BotDamageHandler();
 };
